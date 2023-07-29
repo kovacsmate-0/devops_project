@@ -13,7 +13,7 @@ This application handles POST requests with a parameter named 'string' and a str
 - `Vagrant` and `Virtualbox` (for the virtual environment) [Optional]
 
 ## Installation
-### [Optional]
+### 0. [Optional]
 If you are working on a Windows machine, you will need a virtual Linux environtment to run this application.
 To setup this virtual environment make sure you have Virtualbox and Vagrantfile installed on your computer, then follow these steps:
 
@@ -32,9 +32,55 @@ To setup this virtual environment make sure you have Virtualbox and Vagrantfile 
 
 
 ### 1. Clone the projects repository to your local computer:
-    git clone https://github.com/kovacsmate-0/devops_project.git
-    
-    cd devops_project
+        git clone https://github.com/kovacsmate-0/devops_project.git
 
-### 2. Clone the projects repository to your local computer:
+        cd devops_project
+
+### 2. Install the required dependencies:
+        pip install -r requirements.txt
+
+
+        
+
+## Running the Application
+There are 2 ways to run the case swapper app:
+- Running locally
+- Using Docker
+
+### Running locally
+1. To start the app locally, use the following command:
+
+        python app.py
+   
+3. Now the application listening for POST requests at: `http://127.0.0.0:8000`
+4. To test the app you can use **curl** from another machine:
+
+        curl -X POST -H "Content-Type: application/json" -d '{"string": "abcDEF"}' http://127.0.0.1:8000/
+5. Output should be:
+
+        {"swapped_string": "ABCdef"}
+6. To stop the app, use CTRL + C.
+
+
+### Using Docker
+1. To start the app you have to make sure that Docker and docker-compose are installed on your computer.
+
+2. You also need a Dockerfile and a docker-compose.yaml file.
+Dockerfile:
+
+
+
+        # docker-compose.yaml
+   
+        version: '3'
+        
+        services:
+          web:
+            build:
+              context: .
+              dockerfile: Dockerfile
+            ports:
+              - "8000:8000"
+
+4. 
   
