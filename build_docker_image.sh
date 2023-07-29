@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build -t devops_project_app:1.0 .
+docker build -t devops_project_app .
