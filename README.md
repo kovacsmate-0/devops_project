@@ -45,7 +45,7 @@ To setup this virtual environment make sure you have Virtualbox and Vagrantfile 
 ## Running the Application
 There are 2 ways to run the case swapper app:
 - Running locally
-- Using Docker
+- Using Docker, docker-compose, gunicorn
 
 ### Running locally
 1. To start the app locally, use the following command:
@@ -61,26 +61,100 @@ There are 2 ways to run the case swapper app:
         {"swapped_string": "ABCdef"}
 6. To stop the app, use CTRL + C.
 
+### Deploy application using `gunicorn`
 
-### Using Docker
+To run the app with gunicorn you will need a server entrypoint script [wsgi_server.py]
+
+        from app import app
+        
+        if __name__ == "__main__":
+            app.run()
+        
+In order to test the app deployment with gunicorn use the following command:
+
+        gunicorn wsgi_server:app -b 0.0.0.0:8000
+
+
+For windows users there is an alternative (pip install waitress)
+
+        waitress-serve --listen=0.0.0.0:8000 wsgi-server:app
+
+
+### Packaging with Docker
+
+For the packaging you can use a set of Shell scripts.
+1. Build Docker image 
+
+        #!/bin/bash
+        
+        docker build -t devops_project_app .
+   You can use the following command in cmd to run the script:
+   `./build_docker_image.sh`
+
+2. Start Docker instance
+
+        #!/bin/bash
+        
+        docker run -d -p 8000:8000 --name devops_project_instance devops_project_app
+   You can use the following command in cmd to run the script:
+   `./start_docker_instance.sh`
+   The application is now running on `http://127.0.0.0:8000` and listening for POST requests.
+   
+4. Stop and Remove instance
+
+        #!/bin/bash
+        
+        docker stop devops_project_instance
+        docker rm devops_project_instance
+   You can use the following command in cmd to run the script:
+   `./stop_and_remove_instance.sh`
+   
+### Using docker-compose
 1. To start the app you have to make sure that Docker and docker-compose are installed on your computer.
 
 2. You also need a Dockerfile and a docker-compose.yaml file.
-Dockerfile:
-
-
-
-        # docker-compose.yaml
    
-        version: '3'
+   Dockerfile:
         
-        services:
-          web:
-            build:
-              context: .
-              dockerfile: Dockerfile
-            ports:
-              - "8000:8000"
+                FROM python:3.8
+                
+                WORKDIR /app
+                
+                COPY requirements.txt /app/
+                RUN pip install --no-cache-dir -r requirements.txt
+                
+                COPY . /app
+                
+                CMD ["gunicorn", "wsgi_server:app", "-b", "0.0.0.0:8000"]
+        
+   docker-compose.yaml
+           
+                version: '3'
+                
+                services:
+                  web:
+                    build:
+                      context: .
+                      dockerfile: Dockerfile
+                    ports:
+                      - "8000:8000"
 
-4. 
+3. Build and run Docker containers:
+
+        docker-compose build      
+        docker-compose up -d       # -d: means run the app in the background
+
+4. The app is now accessible on: `http://127.0.0.0:8000`
+5. If your want to stop and delete Docker container, then:
+
+        docker-compose down
+
+## Testing
+You can use `pytest` and `requests` to test the swapcase app.
+
+1. Make sure that the application is running via `docker-compose` or `gunicorn`.
+2. Then run the tests:
+
+        pytest test_app.py
+The test script covers both success and failure cases.
   
