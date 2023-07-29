@@ -37,9 +37,9 @@ To setup this virtual environment make sure you have Virtualbox and Vagrantfile 
         cd devops_project
 
 ### 2. Install the required dependencies:
-        pip install -r requirements.txt
-
-
+        sudo apt update
+        sudp apt install python3-pip
+        pip3 install -r requirements.txt
         
 
 ## Running the Application
@@ -50,7 +50,7 @@ There are 2 ways to run the case swapper app:
 ### Running locally
 1. To start the app locally, use the following command:
 
-        python app.py
+        python3 app.py
    
 3. Now the application listening for POST requests at: `http://127.0.0.0:8000`
 4. To test the app you can use **curl** from another machine:
@@ -72,9 +72,9 @@ To run the app with gunicorn you will need a server entrypoint script [wsgi_serv
         
 In order to test the app deployment with gunicorn use the following command:
 
+        # accept traffic from all of the available interfaces
         gunicorn wsgi_server:app -b 0.0.0.0:8000
-
-
+       
 For windows environment users there is an alternative:
 
         pip install waitress
@@ -90,14 +90,23 @@ Stop the app with CTRL + C.
 ### Packaging with Docker
 
 For the packaging you can use a set of `Shell scripts`.
-But before you do anything, make sure that `Docker` is installed
+
+But before you do anything, make sure that `Docker` is installed.
+
+[Docker installation guide](https://docs.docker.com/engine/install/ubuntu/).
+[docker-compose installation guide]([https://docs.docker.com/engine/install/ubuntu/](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04)).
+
+Need to add `execute permission` to all of the scripts:
+
+        sudo chmod +x build_docker_image.sh start_docker_instance.sh stop_and_remove_instance.sh
+
 1. Build Docker image 
 
         #!/bin/bash
         
         docker build -t devops_project_app .
    You can use the following command in cmd to run the script:
-   `./build_docker_image.sh`
+   `sudo ./build_docker_image.sh`
 
 2. Start Docker instance
 
@@ -105,8 +114,15 @@ But before you do anything, make sure that `Docker` is installed
         
         docker run -d -p 8000:8000 --name devops_project_instance devops_project_app
    You can use the following command in cmd to run the script:
-   `./start_docker_instance.sh`
+   `sudo ./start_docker_instance.sh`
    The application is now running on `http://127.0.0.0:8000` and listening for POST requests.
+
+3. To test it:
+
+        curl -X POST -H "Content-Type: application/json" -d '{"string": "abcDEF"}' http://127.0.0.1:8000/
+Output should be:
+
+        {"swapped_string": "ABCdef"}
    
 4. Stop and Remove instance
 
@@ -115,7 +131,7 @@ But before you do anything, make sure that `Docker` is installed
         docker stop devops_project_instance
         docker rm devops_project_instance
    You can use the following command in cmd to run the script:
-   `./stop_and_remove_instance.sh`
+   `sudo ./stop_and_remove_instance.sh`
    
 ### Using docker-compose
 
@@ -148,13 +164,13 @@ But before you do anything, make sure that `Docker` is installed
 
 3. Build and run Docker containers:
 
-        docker-compose build      
-        docker-compose up -d       # -d: means run the app in the background
+        sudo docker-compose build      
+        sudo docker-compose up -d       # -d: means run the app in the background
 
 4. The app is now accessible on: `http://127.0.0.0:8000`
 5. If your want to stop and delete Docker container, then:
 
-        docker-compose down
+        sudo docker-compose down
 
 ## Testing
 You can use `pytest` and `requests` to test the swapcase app.
