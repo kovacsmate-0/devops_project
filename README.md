@@ -75,14 +75,22 @@ In order to test the app deployment with gunicorn use the following command:
         gunicorn wsgi_server:app -b 0.0.0.0:8000
 
 
-For windows users there is an alternative (pip install waitress)
+For windows environment users there is an alternative:
 
-        waitress-serve --listen=0.0.0.0:8000 wsgi-server:app
+        pip install waitress
+        waitress-serve --listen=0.0.0.0:8000 wsgi_server:app
+To test it you can use **curl** from another machine:
 
+        curl -X POST -H "Content-Type: application/json" -d '{"string": "abcDEF"}' http://127.0.0.1:8000/
+Output should be:
+
+        {"swapped_string": "ABCdef"}
+Stop the app with CTRL + C.
 
 ### Packaging with Docker
 
-For the packaging you can use a set of Shell scripts.
+For the packaging you can use a set of `Shell scripts`.
+But before you do anything, make sure that `Docker` is installed
 1. Build Docker image 
 
         #!/bin/bash
@@ -110,9 +118,8 @@ For the packaging you can use a set of Shell scripts.
    `./stop_and_remove_instance.sh`
    
 ### Using docker-compose
-1. To start the app you have to make sure that Docker and docker-compose are installed on your computer.
 
-2. You also need a Dockerfile and a docker-compose.yaml file.
+1. You will need a Dockerfile and a docker-compose.yaml file.
    
    Dockerfile:
         
