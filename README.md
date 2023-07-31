@@ -15,7 +15,7 @@ This application handles POST requests with a parameter named 'string' and a str
 ## Installation
 ### 0. [Optional]
 If you are working on a Windows machine, you will need a virtual Linux environtment to run this application.
-To setup this virtual environment make sure you have Virtualbox and Vagrantfile installed on your computer, then follow these steps:
+To setup this virtual environment make sure you have Virtualbox and Vagrant installed on your computer, then follow these steps:
 
 1. Start the VM using Vagrant. You have to be inside that folder where the Vagrantfile is.
 
